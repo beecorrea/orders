@@ -5,23 +5,16 @@ import (
 	"testing"
 )
 
-func Reflexivity(a int) bool {
-	return a <= a
+type Relation interface {
+	Compare(a, b int) bool
+	Reflexivity(a int) bool
+	Antisymmetry(a, b int) bool
+	Transitivity(a, b, c int) bool
 }
 
-func Antisymmetry(a, b int) bool {
-	if (a <= b) && (b <= a) && a != b {
-		return false
-	}
-	return true
-}
-
-func Transitivity(a, b, c int) bool {
-	if (a <= b) && (b <= c) && !(a <= c) {
-		return false
-	}
-
-	return true
+type Sort interface {
+	Strategy() string
+	Run(ps Poset) Poset
 }
 
 func AssertPartiallyOrdered(t *testing.T) func(strategy Sort, poset Poset) {

@@ -8,7 +8,7 @@ import (
 
 func TestMergeSort(t *testing.T) {
 	strategy := Mergesort{}
-	numbers := order.Random()
-	// t.Log(numbers)
+	o := order.Leq{}
+	numbers := order.Random(o)
 	order.AssertPartiallyOrdered(t)(strategy, numbers)
 }

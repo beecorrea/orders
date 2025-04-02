@@ -4,15 +4,16 @@ import (
 	"github.com/beecorrea/orders/pkg/order"
 )
 
-type Mergesort struct{}
+type Mergesort struct {
+}
 
-func sortAndMerge(xs []int, ys []int) []int {
+func sortAndMerge(xs []int, ys []int, o order.Relation) []int {
 	i := 0
 	j := 0
 	out := make([]int, 0)
 
 	for i < len(xs) && j < len(ys) {
-		if xs[i] < ys[j] {
+		if o.Compare(xs[i], ys[j]) {
 			out = append(out, xs[i])
 			i++
 		} else {
@@ -34,15 +35,15 @@ func sortAndMerge(xs []int, ys []int) []int {
 	return out
 }
 
-func mergesort(xs []int) []int {
+func mergesort(xs []int, o order.Relation) []int {
 	if len(xs) < 2 {
 		return xs
 	}
 	// Split in half
-	left := mergesort(xs[:len(xs)/2])
-	right := mergesort(xs[len(xs)/2:])
+	left := mergesort(xs[:len(xs)/2], o)
+	right := mergesort(xs[len(xs)/2:], o)
 	// Sort subarrays
-	return sortAndMerge(left, right)
+	return sortAndMerge(left, right, o)
 }
 
 func (ms Mergesort) Strategy() string {
@@ -51,6 +52,6 @@ func (ms Mergesort) Strategy() string {
 
 func (ms Mergesort) Run(ps order.Poset) order.Poset {
 	numbers := ps.Members()
-	sorted := mergesort(numbers)
-	return order.New(sorted)
+	sorted := mergesort(numbers, ps.Order())
+	return order.New(sorted, ps.Order())
 }

@@ -2,90 +2,73 @@ package order
 
 import (
 	"github.com/beecorrea/orders/pkg/fake"
-	"github.com/beecorrea/orders/pkg/set"
 )
 
-type Sort interface {
-	Strategy() string
-	Run(ps Poset) Poset
-}
-
 type poset struct {
-	members  []int
-	powerset set.Powerset
+	members []int
+	order   Relation
 }
 
 type Poset interface {
 	Members() []int
-	Powerset() set.Powerset
+	Order() Relation
 	IsPartiallyOrdered() bool
 	Sort(s Sort) Poset
 }
 
-func New(xs []int) Poset {
+func New(xs []int, order Relation) Poset {
 	return poset{
-		members:  xs,
-		powerset: nil,
+		members: xs,
+		order:   order,
 	}
 }
 
-func Random() Poset {
+func Random(order Relation) Poset {
 	xs := fake.RandomInts(10)
-	return New(xs)
+	return New(xs, order)
 }
 
 func (ps poset) Members() []int {
 	return ps.members
 }
 
-func (ps poset) Powerset() set.Powerset {
-	if ps.powerset == nil {
-		return set.BuildPowerset(ps.members)
-	}
+func (ps poset) Order() Relation {
+	return ps.order
+}
 
-	return ps.powerset
+func initMatrix(n int) [][][]bool {
+	rels := make([][][]bool, n)
+	for range n {
+		for j := range n {
+			u := make([]bool, n)
+			rels[j] = append(rels[j], u)
+		}
+		u := make([][]bool, n)
+		rels = append(rels, u)
+	}
+	return rels
 }
 
 func (ps poset) IsPartiallyOrdered() bool {
-	return ps.ensureReflexivity() &&
-		ps.ensureAntisymmetry() &&
-		ps.ensureTransitivity()
+	n := len(ps.members)
+	rels := initMatrix(n)
+
+	for i := range ps.members {
+		rels[i][0][0] = ps.order.Reflexivity(ps.members[i])
+		for j := range ps.members {
+			rels[i][j][0] = ps.order.Antisymmetry(ps.members[i], ps.members[j])
+			for k := range ps.members {
+				rels[i][j][k] = ps.order.Transitivity(ps.members[i], ps.members[j], ps.members[k])
+				if !(rels[i][0][0] && rels[i][j][0] && rels[i][j][k]) {
+					return false
+				}
+			}
+		}
+	}
+
+	return true
 }
 
 func (ps poset) Sort(s Sort) Poset {
 	return s.Run(ps)
-}
-
-func (ps poset) ensureReflexivity() bool {
-	sets := ps.Powerset().FilterBySize(1)
-	hasReflexivity := false
-	for _, subset := range sets {
-		first := subset[0]
-		hasReflexivity = Reflexivity(first)
-	}
-
-	return hasReflexivity
-}
-
-func (ps poset) ensureAntisymmetry() bool {
-	sets := ps.Powerset().FilterBySize(2)
-	hasAntisymmetry := false
-	for _, subset := range sets {
-		first := subset[0]
-		second := subset[1]
-		hasAntisymmetry = Antisymmetry(first, second)
-	}
-	return hasAntisymmetry
-}
-
-func (ps poset) ensureTransitivity() bool {
-	sets := ps.Powerset().FilterBySize(3)
-	hasTransitivity := false
-	for _, subset := range sets {
-		first := subset[0]
-		second := subset[1]
-		third := subset[2]
-		hasTransitivity = Transitivity(first, second, third)
-	}
-	return hasTransitivity
 }
