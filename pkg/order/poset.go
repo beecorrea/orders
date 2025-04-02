@@ -1,6 +1,7 @@
 package order
 
 import (
+	"github.com/beecorrea/orders/pkg/fake"
 	"github.com/beecorrea/orders/pkg/set"
 )
 
@@ -22,11 +23,15 @@ type Poset interface {
 }
 
 func New(xs []int) Poset {
-	powerset := set.BuildPowerset(xs)
 	return poset{
 		members:  xs,
-		powerset: powerset,
+		powerset: nil,
 	}
+}
+
+func Random() Poset {
+	xs := fake.RandomInts(10)
+	return New(xs)
 }
 
 func (ps poset) Members() []int {
@@ -34,6 +39,10 @@ func (ps poset) Members() []int {
 }
 
 func (ps poset) Powerset() set.Powerset {
+	if ps.powerset == nil {
+		return set.BuildPowerset(ps.members)
+	}
+
 	return ps.powerset
 }
 
@@ -48,7 +57,7 @@ func (ps poset) Sort(s Sort) Poset {
 }
 
 func (ps poset) ensureReflexivity() bool {
-	sets := ps.powerset.FilterBySize(1)
+	sets := ps.Powerset().FilterBySize(1)
 	hasReflexivity := false
 	for _, subset := range sets {
 		first := subset[0]
@@ -59,7 +68,7 @@ func (ps poset) ensureReflexivity() bool {
 }
 
 func (ps poset) ensureAntisymmetry() bool {
-	sets := ps.powerset.FilterBySize(2)
+	sets := ps.Powerset().FilterBySize(2)
 	hasAntisymmetry := false
 	for _, subset := range sets {
 		first := subset[0]
@@ -70,7 +79,7 @@ func (ps poset) ensureAntisymmetry() bool {
 }
 
 func (ps poset) ensureTransitivity() bool {
-	sets := ps.powerset.FilterBySize(3)
+	sets := ps.Powerset().FilterBySize(3)
 	hasTransitivity := false
 	for _, subset := range sets {
 		first := subset[0]

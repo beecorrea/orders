@@ -1,6 +1,8 @@
 package mergesort
 
-import "github.com/beecorrea/orders/pkg/order"
+import (
+	"github.com/beecorrea/orders/pkg/order"
+)
 
 type Mergesort struct{}
 
