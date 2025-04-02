@@ -1,6 +1,8 @@
 package mergesort
 
-import "github.com/beecorrea/orders/pkg/set"
+import "github.com/beecorrea/orders/pkg/order"
+
+type Mergesort struct{}
 
 func sortAndMerge(xs []int, ys []int) []int {
 	i := 0
@@ -41,8 +43,12 @@ func mergesort(xs []int) []int {
 	return sortAndMerge(left, right)
 }
 
-func Sort(ps set.Poset) set.Poset {
+func (ms Mergesort) Strategy() string {
+	return "Mergesort"
+}
+
+func (ms Mergesort) Run(ps order.Poset) order.Poset {
 	numbers := ps.Members()
 	sorted := mergesort(numbers)
-	return set.New(sorted)
+	return order.New(sorted)
 }

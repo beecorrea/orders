@@ -27,7 +27,7 @@ func Combinations(xs []int, r int) Powerset {
 }
 
 // Credits to https://prtamil.github.io/posts/powersets-go/
-func buildPowerset(xs []int) Powerset {
+func BuildPowerset(xs []int) Powerset {
 	res := make(Powerset, 0)
 	for i := 0; i <= len(xs); i++ {
 		x := Combinations(xs, i)

@@ -3,14 +3,15 @@ package mergesort
 import (
 	"testing"
 
-	"github.com/beecorrea/orders/pkg/set"
+	"github.com/beecorrea/orders/pkg/order"
 )
 
 func TestMergeSort(t *testing.T) {
-	numbers := set.New([]int{10, 6, 2, 1, 5, 8, 3, 4, 7, 9})
-	expected := set.New([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
+	strategy := Mergesort{}
+	numbers := order.New([]int{10, 6, 2, 1, 5, 8, 3, 4, 7, 9})
+	expected := order.New([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
 
-	actual := Sort(numbers)
+	actual := numbers.Sort(strategy)
 	if len(actual.Members()) != len(expected.Members()) {
 		t.Errorf("actual and expected have different amount of elements")
 	}
@@ -21,5 +22,5 @@ func TestMergeSort(t *testing.T) {
 		}
 	}
 
-	set.AssertPartiallyOrdered(t, numbers)
+	order.AssertPartiallyOrdered(t, numbers)
 }

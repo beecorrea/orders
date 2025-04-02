@@ -1,24 +1,30 @@
-package set
+package order
 
 import (
 	"testing"
 
-	"github.com/beecorrea/orders/pkg/order"
+	"github.com/beecorrea/orders/pkg/set"
 )
+
+type Sort interface {
+	Strategy() string
+	Run(ps Poset) Poset
+}
 
 type poset struct {
 	members  []int
-	powerset Powerset
+	powerset set.Powerset
 }
 
 type Poset interface {
 	Members() []int
-	Powerset() Powerset
+	Powerset() set.Powerset
 	IsPartiallyOrdered() bool
+	Sort(s Sort) Poset
 }
 
 func New(xs []int) Poset {
-	powerset := buildPowerset(xs)
+	powerset := set.BuildPowerset(xs)
 	return poset{
 		members:  xs,
 		powerset: powerset,
@@ -29,7 +35,7 @@ func (ps poset) Members() []int {
 	return ps.members
 }
 
-func (ps poset) Powerset() Powerset {
+func (ps poset) Powerset() set.Powerset {
 	return ps.powerset
 }
 
@@ -39,12 +45,16 @@ func (ps poset) IsPartiallyOrdered() bool {
 		ps.ensureTransitivity()
 }
 
+func (ps poset) Sort(s Sort) Poset {
+	return s.Run(ps)
+}
+
 func (ps poset) ensureReflexivity() bool {
 	sets := ps.powerset.FilterBySize(1)
 	hasReflexivity := false
 	for _, subset := range sets {
 		first := subset[0]
-		hasReflexivity = order.Reflexivity(first)
+		hasReflexivity = Reflexivity(first)
 	}
 
 	return hasReflexivity
@@ -56,7 +66,7 @@ func (ps poset) ensureAntisymmetry() bool {
 	for _, subset := range sets {
 		first := subset[0]
 		second := subset[1]
-		hasAntisymmetry = order.Antisymmetry(first, second)
+		hasAntisymmetry = Antisymmetry(first, second)
 	}
 	return hasAntisymmetry
 }
@@ -68,7 +78,7 @@ func (ps poset) ensureTransitivity() bool {
 		first := subset[0]
 		second := subset[1]
 		third := subset[2]
-		hasTransitivity = order.Transitivity(first, second, third)
+		hasTransitivity = Transitivity(first, second, third)
 	}
 	return hasTransitivity
 }
