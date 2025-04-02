@@ -1,5 +1,7 @@
 package mergesort
 
+import "github.com/beecorrea/orders/pkg/set"
+
 func sortAndMerge(xs []int, ys []int) []int {
 	i := 0
 	j := 0
@@ -28,13 +30,19 @@ func sortAndMerge(xs []int, ys []int) []int {
 	return out
 }
 
-func Mergesort(xs []int) []int {
+func mergesort(xs []int) []int {
 	if len(xs) < 2 {
 		return xs
 	}
 	// Split in half
-	left := Mergesort(xs[:len(xs)/2])
-	right := Mergesort(xs[len(xs)/2:])
+	left := mergesort(xs[:len(xs)/2])
+	right := mergesort(xs[len(xs)/2:])
 	// Sort subarrays
 	return sortAndMerge(left, right)
+}
+
+func Sort(ps set.Poset) set.Poset {
+	numbers := ps.Members()
+	sorted := mergesort(numbers)
+	return set.New(sorted)
 }
