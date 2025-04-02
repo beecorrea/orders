@@ -1,8 +1,6 @@
 package order
 
 import (
-	"testing"
-
 	"github.com/beecorrea/orders/pkg/set"
 )
 
@@ -81,13 +79,4 @@ func (ps poset) ensureTransitivity() bool {
 		hasTransitivity = Transitivity(first, second, third)
 	}
 	return hasTransitivity
-}
-
-func AssertPartiallyOrdered(t *testing.T, poset Poset) bool {
-	return t.Run("Assert properties of partial order relations", func(t *testing.T) {
-		isPartiallyOrdered := poset.IsPartiallyOrdered()
-		if !isPartiallyOrdered {
-			t.Errorf("not an poset")
-		}
-	})
 }
