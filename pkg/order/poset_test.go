@@ -5,8 +5,7 @@ import (
 )
 
 type OrderTestCases struct {
-	poset    Poset
-	expected bool
+	poset Poset
 }
 
 func TestIsPartiallyOrdered(t *testing.T) {
@@ -14,12 +13,10 @@ func TestIsPartiallyOrdered(t *testing.T) {
 	descendingOrder := []int{10, 9, 8, 7, 6, 5, 4, 3, 2, 1}
 	var cases []OrderTestCases = []OrderTestCases{
 		{
-			poset:    New(ascendingOrder, Leq{}),
-			expected: true,
+			poset: New(ascendingOrder, Leq{}),
 		},
 		{
-			poset:    New(descendingOrder, Leq{}),
-			expected: true,
+			poset: New(descendingOrder, Leq{}),
 		},
 	}
 
@@ -37,20 +34,18 @@ func TestIsntPartiallyOrdered(t *testing.T) {
 	descendingOrder := []int{10, 9, 8, 7, 6, 5, 4, 3, 2, 1}
 	var cases []OrderTestCases = []OrderTestCases{
 		{
-			poset:    New(ascendingOrder, Lt{}),
-			expected: true,
+			poset: New(ascendingOrder, Lt{}),
 		},
 		{
-			poset:    New(descendingOrder, Lt{}),
-			expected: true,
+			poset: New(descendingOrder, Lt{}),
 		},
 	}
 
 	for _, c := range cases {
 		isOrdered := c.poset.IsPartiallyOrdered()
 
-		if !isOrdered {
-			t.Errorf("should be partially ordered")
+		if isOrdered {
+			t.Errorf("should not partially ordered")
 		}
 	}
 }

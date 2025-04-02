@@ -24,7 +24,7 @@ func New(xs []int, order Relation) Poset {
 }
 
 func Random(order Relation) Poset {
-	xs := fake.RandomInts(10)
+	xs := fake.RandomInts(100)
 	return New(xs, order)
 }
 
@@ -36,30 +36,15 @@ func (ps poset) Order() Relation {
 	return ps.order
 }
 
-func initMatrix(n int) [][][]bool {
-	rels := make([][][]bool, n)
-	for range n {
-		for j := range n {
-			u := make([]bool, n)
-			rels[j] = append(rels[j], u)
-		}
-		u := make([][]bool, n)
-		rels = append(rels, u)
-	}
-	return rels
-}
-
 func (ps poset) IsPartiallyOrdered() bool {
-	n := len(ps.members)
-	rels := initMatrix(n)
-
+	var reflexivity, antisymmetry, transitivity bool
 	for i := range ps.members {
-		rels[i][0][0] = ps.order.Reflexivity(ps.members[i])
+		reflexivity = ps.order.Reflexivity(ps.members[i])
 		for j := range ps.members {
-			rels[i][j][0] = ps.order.Antisymmetry(ps.members[i], ps.members[j])
+			antisymmetry = ps.order.Antisymmetry(ps.members[i], ps.members[j])
 			for k := range ps.members {
-				rels[i][j][k] = ps.order.Transitivity(ps.members[i], ps.members[j], ps.members[k])
-				if !(rels[i][0][0] && rels[i][j][0] && rels[i][j][k]) {
+				transitivity = ps.order.Transitivity(ps.members[i], ps.members[j], ps.members[k])
+				if !(reflexivity && antisymmetry && transitivity) {
 					return false
 				}
 			}
