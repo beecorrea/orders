@@ -3,7 +3,7 @@ package set
 type Powerset [][]int
 
 // Credits to https://prtamil.github.io/posts/powersets-go/
-func Combinations(xs []int, r int) Powerset {
+func combinations(xs []int, r int) Powerset {
 	if r == 1 {
 		temp := make(Powerset, 0)
 		for _, rr := range xs {
@@ -17,7 +17,7 @@ func Combinations(xs []int, r int) Powerset {
 		for i := 0; i < len(xs); i++ {
 			perms := make([]int, 0)
 			perms = append(perms, xs[:i]...)
-			for _, x := range Combinations(perms, r-1) {
+			for _, x := range combinations(perms, r-1) {
 				t := append(x, xs[i])
 				res = append(res, Powerset{t}...)
 			}
@@ -30,7 +30,7 @@ func Combinations(xs []int, r int) Powerset {
 func BuildPowerset(xs []int) Powerset {
 	res := make(Powerset, 0)
 	for i := 0; i <= len(xs); i++ {
-		x := Combinations(xs, i)
+		x := combinations(xs, i)
 		res = append(res, x...)
 	}
 	return res

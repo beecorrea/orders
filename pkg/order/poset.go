@@ -84,7 +84,7 @@ func (ps poset) ensureTransitivity() bool {
 }
 
 func AssertPartiallyOrdered(t *testing.T, poset Poset) bool {
-	return t.Run("Assert properties of order relations", func(t *testing.T) {
+	return t.Run("Assert properties of partial order relations", func(t *testing.T) {
 		isPartiallyOrdered := poset.IsPartiallyOrdered()
 		if !isPartiallyOrdered {
 			t.Errorf("not an poset")
